@@ -137,6 +137,13 @@ build_kernel() {
 	make -j"$(nproc --all)" CC=clang $args "${KERNEL_CONFIG}" \
 		|| die "defconfig generation failed"
 
+	# The vendor modules in vendor_boot are built with LTO/CFI/SCS. If any of
+	# these silently drop out of the resolved .config, they will not load and
+	# the device hangs in first-stage init.
+	info "ABI-critical config check:"
+	grep -E "^(CONFIG_LTO|CONFIG_CFI|CONFIG_SHADOW_CALL|CONFIG_MODVERSIONS|CONFIG_THINLTO)" \
+		"${OUT}/.config" || true
+
 	info "make ${args} ${KERNEL_IMAGE_NAME}"
 	# shellcheck disable=SC2086
 	make -j"$(nproc --all)" CC="$cc" $args "${KERNEL_IMAGE_NAME}" \
