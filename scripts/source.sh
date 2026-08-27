@@ -19,6 +19,12 @@ retry 3 git clone -q --recursive --depth=1 \
 	-b "$KERNEL_SOURCE_BRANCH" "$KERNEL_SOURCE" "$KERNEL_DIR" \
 	|| die "failed to clone ${KERNEL_SOURCE}"
 
+KERNEL_COMMIT=07e3a22294d1c76c27301e511b7444ba32ec11ad
+git -C "$KERNEL_DIR" fetch --depth=1 origin "$KERNEL_COMMIT" \
+	|| die "failed to fetch ${KERNEL_COMMIT}"
+git -C "$KERNEL_DIR" checkout -q FETCH_HEAD \
+	|| die "failed to check out ${KERNEL_COMMIT}"
+
 # KernelSU forks compute their version from the commit count, and several
 # read it straight out of the enclosing git repo. A depth-1 clone reports 1
 # commit, which produces a nonsense version. Unshallow just enough to count.
