@@ -137,10 +137,10 @@ build_kernel() {
 	make -j"$(nproc --all)" CC=clang $args "${KERNEL_CONFIG}" \
 		|| die "defconfig generation failed"
 
-	info "make ${args}"
+	info "make ${args} ${KERNEL_IMAGE_NAME}"
 	# shellcheck disable=SC2086
-	make -j"$(nproc --all)" CC="$cc" $args \
-		|| die "kernel build failed"
+	make -j"$(nproc --all)" CC="$cc" $args "${KERNEL_IMAGE_NAME}" \
+			|| die "kernel build failed"
 
 	endgroup
 }
